@@ -6,20 +6,18 @@ from bs4 import BeautifulSoup
 import requests
 import pymongo
 
+def init_browser():
+    # @NOTE: Replace the path with your actual path to the chromedriver
+    executable_path = {"executable_path": "/usr/local/bin/chromedriver"}
+    return Browser("chrome", **executable_path, headless=False)
+
 def scrape():
 
-    scrape_dict = {}
+    
     # ### NASA Mars News
 
     # Loading Chromedriver
-
-    # identify location of chromedriver and store it as a variable
-    driverPath = get_ipython().getoutput('which chromedriver')
-
-    # Setup configuration variables to enable Splinter to interact with browser
-    executable_path = {'executable_path': driverPath[0]}
-    browser = Browser('chrome', **executable_path, headless=False)
-
+    browser = init_browser()
     mars_news_url = "https://mars.nasa.gov/news/?page=0&per_page=40&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest"
 
     response = requests.get(mars_news_url)
@@ -37,18 +35,21 @@ def scrape():
 
 
     #getting all lists under slide
-    sidebar = soup.find('li', class_="slide")
+    content = soup.find_all('div', class_="content_title")
+    sidebar = content[1]
     # getting the title and the paragraph
-    categories = sidebar.find('div', class_="rollover_description_inner")
-    header = sidebar.find('div',class_="content_title")
+    p_results = soup.find('div', class_='list_text')
+    para = p_results.find('div', class_='article_teaser_body')
+    news_p = para.text
+    print(news_p)
+    header = sidebar.find('a')
     #extracting just the title
-    news_p = categories.text
+    #news_p = p.text
     news_title = header.text
     #printing the title and paragraph
     #print(f"news_title = {news_title}")
     #print(f"news_p = {news_p}")
-    scrape_dict["news_title"]= news_title
-    scrape_dict["news_p"] = news_p
+
 
     # ### JPL Mars Space Images - Featured Image
 
@@ -66,11 +67,10 @@ def scrape():
     #saving the URL
     featured_image_url = browser.url
     #exiting out of view
-    browser.quit()
+    #browser.quit()
 
 
-    print(f"featured_image_url = {featured_image_url}")
-    scrape_dict["featured_image_url"] = featured_image_url 
+    #print(f"featured_image_url = {featured_image_url}")
         
 
 
@@ -101,37 +101,15 @@ def scrape():
     table_html = mars_fact_df.to_html()
     #printing lines of HTML
     #print(table_html)
-    scrape_dict["mars_facts"] = table_html
+
 
     # ### Mars Hemispheres
     # 
     # 
-    # Visit the USGS Astrogeology site here to obtain high resolution images for each of Mar's hemispheres.
-    # 
-    # 
-    # You will need to click each of the links to the hemispheres in order to find the image url to the full resolution image.
-    # 
-    # 
-    # Save both the image url string for the full resolution hemisphere image, and the Hemisphere title containing the hemisphere name. Use a Python dictionary to store the data using the keys img_url and title.
-    # 
-    # 
-    # Append the dictionary with the image url string and the hemisphere title to a list. This list will contain one dictionary for each hemisphere.
-
-
-
-    # identify location of chromedriver and store it as a variable
-    driverPath = get_ipython().getoutput('which chromedriver')
-
-    # Setup configuration variables to enable Splinter to interact with browser
-    executable_path = {'executable_path': driverPath[0]}
-    browser = Browser('chrome', **executable_path, headless=False)
-
-
     #visit url
     url_hem = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
     browser.visit(url_hem)
     #click by partial stuff
-    i=1
     hemisphere_image_urls = []
     browser.click_link_by_partial_text('Cerberus')
     browser.click_link_by_partial_text('Sample')
@@ -170,8 +148,15 @@ def scrape():
                             {"title": val_title[0],"image_url":val_url}]
 
     browser.quit()
-    scrape_dict["hemisphere_image_urls"] = hemisphere_image_urls
-    return scrape_dict
+    mars_data = [{
+        "news_title": news_title,
+        "news_paragraph": news_p,
+        "featured_image": featured_image_url,
+        "mars_facts": table_html,
+        "hemispheres": hemisphere_image_urls
+    }]
+    
+    return mars_data
 
 
 results = scrape()
