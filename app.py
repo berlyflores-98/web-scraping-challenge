@@ -22,7 +22,9 @@ mars_facts = db.mars_facts
 # If there are no listings, the table will be empty.
 @app.route("/")
 def index():
-    mars_results = mars_facts.find()
+    conn = 'mongodb://localhost:27017'
+    client = pymongo.MongoClient(conn)
+    mars_results = mars_facts.find_one()
     return render_template("index.html", mars_results=mars_results)
 
 # This route will trigger the webscraping, but it will then send us back to the index route to render the results

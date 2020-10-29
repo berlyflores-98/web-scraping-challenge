@@ -112,38 +112,48 @@ def scrape():
     #click by partial stuff
     hemisphere_image_urls = []
     browser.click_link_by_partial_text('Cerberus')
-    browser.click_link_by_partial_text('Sample')
-    Cer_url = browser.url
+    # Parse HTML with Beautiful Soup  
+    img_html = browser.html
+    soup = BeautifulSoup( img_html, 'html.parser')
+    # Retrieve full image source 
+    Cer_url = 'https://astrogeology.usgs.gov' + soup.find('img', class_='wide-image')['src']
     cer_raw_title = browser.title
     cer_title = cer_raw_title.split("|")
-    browser.visit(url_hem)
+    browser.back()
     browser.click_link_by_partial_text('Schiaparelli')
-    browser.click_link_by_partial_text('Sample')
-    sch_url = browser.url
+    # Parse HTML with Beautiful Soup  
+    img_html = browser.html
+    soup = BeautifulSoup( img_html, 'html.parser')
+    # Retrieve full image source 
+    sch_url = 'https://astrogeology.usgs.gov' + soup.find('img', class_='wide-image')['src']
     sch_raw_title = browser.title
     sch_title = sch_raw_title.split("|")
-    #print(sch_url)
-    #print(sch_title[0])
-    browser.visit(url_hem)
+    print(sch_url)
+    print(sch_title[0])
+    browser.back()
     browser.click_link_by_partial_text('Syrtis')
-    browser.click_link_by_partial_text('Sample')
-    syr_url = browser.url
+    # Parse HTML with Beautiful Soup  
+    img_html = browser.html
+    soup = BeautifulSoup( img_html, 'html.parser')
+    # Retrieve full image source 
+    syr_url = 'https://astrogeology.usgs.gov' + soup.find('img', class_='wide-image')['src']
     syr_raw_title = browser.title
     syr_title = syr_raw_title.split("|")
     #print(syr_url)
     #print(syr_title[0])
-    browser.visit(url_hem)
+    browser.back()
     browser.click_link_by_partial_text('Valles')
-    browser.click_link_by_partial_text('Sample')
-    val_url = browser.url
+    # Parse HTML with Beautiful Soup  
+    img_html = browser.html
+    soup = BeautifulSoup( img_html, 'html.parser')
+    # Retrieve full image source 
+    val_url = 'https://astrogeology.usgs.gov' + soup.find('img', class_='wide-image')['src']
     val_raw_title = browser.title
     val_title = val_raw_title.split("|")
-    #print(val_url)
-    #print(val_title[0])
 
 
     hemisphere_image_urls = [{"title":cer_title[0],"image_url": Cer_url},
-                            {"title":sch_title[0],"image_url":sch_url},
+                            {"title": sch_title[0],"image_url":sch_url},
                             {"title": syr_title[0],"image_url":syr_url},
                             {"title": val_title[0],"image_url":val_url}]
 

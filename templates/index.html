@@ -10,12 +10,59 @@
 <body>
   <div class="container text-center">
     <h1 class="jumbotron">Mars Facts!</h1>
-    <a class="btn btn-primary" href="http://localhost:5000/scrape" role="button">Scrape for current Data</a>
+    <a class="btn btn-primary" href="/scrape" role="button">Scrape for current Data</a>
+  </div>
 
-
-      </tbody>
-    </table>
-
+  <div class="container-fluid"> 
+    <div class="row">
+  
+      <div class="col-md-6" style="padding: 2.5%;">
+        <h2>Latest Mars News:</h2>
+        <h3>{{ mars_results.news_title }}</h3>
+        <p>{{ mars_results.news_paragraph }}</p>
+      </div>
+    </div>
+  </div>
+  
+    <div class="row">
+      <div class="container">
+        <!-- Left Image-->
+        <div class="col-lg-7 col-md-7">
+            <h3>Featured Mars Image</h3>
+            <img src="{{ mars_results.featured_image }}" style="max-width:85%; max-height: auto;" alt="Mars Featured Image">
+        </div>
+      </div>
+      <div class="col-lg-1 col-md-1 "></div>
+      <div class="container-fluid col-lg-4 col-md-4 ">
+            <!-- Table -->
+            <h3>Mars Facts</h3>
+            <div style="max-width: 450px; max-height: 150px; font-size: 15px; margin-bottom: 65px;">
+                {{ mars_results.mars_facts|safe}}
+        </div> <!-- col4 -->
+      </div>
+    </div><!-- Row -->
+  <!-- Mars Hemispheres -->
+  <br>
+  <br>
+<div class="container-fluid" >
+  <div class="row">
+    <h2 class="text-center col-md-12">Hemispheres of Mars</h2>
+    <br>
+  </div>
+  <div class="col-md-12">
+    <div class="row">
+  {% for pics in mars_results.hemispheres %}
+      <div class="col-md-6 text-center">
+        <div class="card text-white bg-dark" style="margin: 30px;">
+          <img  src="{{ pics.image_url }}" style="max-width:50%; max-height: auto;" class="card-img-top text-center">
+            <div class="card-body text-center">
+              <h7 class="card-title text-center">{{ pics.title }}</h7>
+            </div>
+          </div>
+      </div>
+  {% endfor %}
+  </div>
+  </div>
   </div>
 </body>
 
